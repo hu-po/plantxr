@@ -33,20 +33,6 @@ export function Chair(props) {
   )
 }
 
-export function Mug(props) {
-  const { nodes, materials } = useGLTF('/cup.glb')
-  const [cup] = useCylinder(() => ({ mass: 1, args: [0.62, 0.62, 1.2, 16], linearDamping: 0.95, angularDamping: 0.95, ...props }))
-  const bind = useDragConstraint(cup)
-  return (
-    <group ref={cup} {...bind} dispose={null}>
-      <group rotation={[Math.PI / 2, 0, 0]} scale={[0.012, 0.012, 0.012]}>
-        <mesh receiveShadow castShadow material={materials.default} geometry={nodes['buffer-0-mesh-0'].geometry} />
-        <mesh material={materials.Liquid} geometry={nodes['buffer-0-mesh-0_1'].geometry} />
-      </group>
-    </group>
-  )
-}
-
 export function Table(props) {
   const [table] = useCompoundBody(() => ({
     mass: 54,

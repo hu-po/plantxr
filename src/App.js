@@ -1,7 +1,7 @@
 import { MeshReflectorMaterial } from '@react-three/drei'
 import { Physics, usePlane } from '@react-three/cannon'
 import { Guy } from './components/Guy'
-import { Mug, Chair, Table, Lamp } from './components/Furniture'
+import { Chair, Table, Lamp } from './components/Furniture'
 import { XRCanvas, Hands, Controllers } from '@coconut-xr/natuerlich/defaults'
 import { NonImmersiveCamera, useEnterXR, ImmersiveSessionOrigin, SessionModeGuard, VisibilitySessionModeGuard } from '@coconut-xr/natuerlich/react'
 
@@ -35,7 +35,6 @@ export default function App() {
           <Floor position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} />
           <Chair position={[0, 0, -2.52]} />
           <Table position={[8, 0, 0]} />
-          <Mug position={[8, 3, 0]} />
           <Lamp position={[0, 25, 0]} />
         </Physics>
         <ImmersiveSessionOrigin scale={10}>
