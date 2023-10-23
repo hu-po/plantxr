@@ -50,7 +50,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       import {Renderer, createWebGLContext} from './js/render/core/renderer.js';
       import {UrlTexture} from './js/render/core/texture.js';
       import {ButtonNode} from './js/render/nodes/button.js';
-      import {Gltf2Node} from './js/render/nodes/gltf2.js';
+      // import {Gltf2Node} from './js/render/nodes/gltf2.js';
       import {VideoNode} from './js/render/nodes/video.js';
       import {InlineViewerHelper} from './js/util/inline-viewer-helper.js';
       import {QueryArgs} from './js/util/query-args.js';
@@ -73,7 +73,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       let gl = null;
       let renderer = null;
       let scene = new Scene();
-      scene.addNode(new Gltf2Node({url: 'media/gltf/home-theater/home-theater.gltf'}));
+      // scene.addNode(new Gltf2Node({url: 'media/gltf/home-theater/home-theater.gltf'}));
       scene.enableStats(false);
 
       let video = document.createElement('video');
