@@ -6,7 +6,7 @@ app = Flask(__name__, static_url_path='', static_folder='.')
 # Serve your main WebXR HTML file
 @app.route('/')
 def index():
-    return send_from_directory('.', 'flask.html')
+    return send_from_directory('.', 'flask_stereo.html')
 
 # API endpoint for Python processing
 @app.route('/api/analyze', methods=['POST'])
