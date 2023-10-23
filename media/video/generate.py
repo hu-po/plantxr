@@ -1,23 +1,59 @@
-import numpy as np
 import cv2
+import numpy as np
+import os
 
-# Define properties
-width = 960
-height = 1080
-fps = 30  # Use a reasonable fps value instead of 30000
-duration = 10 # in seconds
-fourcc = cv2.VideoWriter_fourcc(*'VP80')  # Using 'VP80' for WebM format with VP8 codec
-output_file = "random_video.webm"
+# Initialize video capture
+cap = cv2.VideoCapture(0)
 
-# Create a VideoWriter object
-out = cv2.VideoWriter(output_file, fourcc, fps, (width, height))
+if not cap.isOpened():
+    print("Error: Could not open the camera.")
+    exit()
 
-for _ in range(fps * duration):
-    # Generate a random frame
-    frame = np.random.randint(0, 256, (height, width, 3), dtype=np.uint8)
-    out.write(frame)
+# Get the dimensions of the frame
+width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-# Release the VideoWriter object
-out.release()
+# Ensure the captured width and height matches the requirement
+if width != 640 or height != 240:
+    print("Error: The captured video dimensions are not as expected.")
+    exit()
 
-print(f"Random video saved as {output_file}")
+# Define the codec and create VideoWriter object
+fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+out = cv2.VideoWriter('output_temp.avi', fourcc, 30.0, (960, 1080))
+
+try:
+    while cap.isOpened():
+        ret, frame = cap.read()
+
+        if ret:
+            # Split the frame into left and right
+            left_frame = frame[:, :width//2]
+            right_frame = frame[:, width//2:]
+            
+            # Resize each half to 960x540
+            left_resized = cv2.resize(left_frame, (960, 540))
+            right_resized = cv2.resize(right_frame, (960, 540))
+            
+            # Combine them into a new frame
+            combined_frame = np.vstack((left_resized, right_resized))
+            out.write(combined_frame)
+        else:
+            break
+
+    # Release the video objects
+    cap.release()
+    out.release()
+
+
+except KeyboardInterrupt:
+    # Handle keyboard interruption gracefully
+    cap.release()
+    out.release()
+    cv2.destroyAllWindows()
+
+    # Convert the AVI file to WebM using FFmpeg
+    os.system('ffmpeg -i output_temp.avi output.webm')
+
+    # Optionally, remove the temporary AVI file
+    os.remove('output_temp.avi')
