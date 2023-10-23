@@ -1,3 +1,14 @@
+# python
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+
+# local certificates
+*.crt
+*.key
+*.pem
+
 # Logs
 logs
 *.log
