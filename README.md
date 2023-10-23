@@ -12,6 +12,7 @@ openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out c
 http-server -S -C cert.pem -K key.pem
 ```
 
+https://immersive-web.github.io/webxr/
 https://developer.oculus.com/documentation/web/webxr-overview/
 https://immersive-web.github.io/webxr/explainer.html
 
