@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
-from flask import Flask, render_template, Response
+from flask import Flask, send_from_directory
 from flask_socketio import SocketIO, emit
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='', static_folder='.')
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
@@ -28,9 +28,10 @@ def gen_frames():
         yield frame_bytes
     cap.release()
 
+# Serve your main WebXR HTML file
 @app.route('/')
 def index():
-    return render_template('flask_stereo.html')
+    return send_from_directory('.', 'flask_stereo.html')
 
 @socketio.on('connect')
 def on_connect():
