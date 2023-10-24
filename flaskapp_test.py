@@ -1,42 +1,24 @@
-import cv2
-import numpy as np
-from flask import Flask, render_template, Response
-from flask_socketio import SocketIO, emit
+from flask import Flask, jsonify, send_from_directory
+from datetime import datetime
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+app = Flask(__name__, static_url_path='', static_folder='.')
 
-def gen_frames():
-    cap = cv2.VideoCapture('media/video/bbb-sunflower-540p2-1min.webm')
-    while True:
-        success, frame = cap.read()
-        if not success:
-            break
-        # Convert the frame to a byte stream
-        frame_bytes = cv2.imencode('.jpg', frame)[1].tobytes()
-        # Send the byte stream over the WebSocket connection
-        yield frame_bytes
-    cap.release()
-
+# Serve your main WebXR HTML file
 @app.route('/')
 def index():
-    return render_template('flask_stereo.html')
+    return send_from_directory('.', 'flask_stereo.html')
 
-@socketio.on('connect')
-def on_connect():
-    print('Client connected')
+# API endpoint for Python processing
+@app.route('/api/analyze', methods=['POST'])
+def analyze():
+    # Your Python logic here
+    return {"result": "analysis result"}
 
-@socketio.on('disconnect')
-def on_disconnect():
-    print('Client disconnected')
-
-@socketio.on('stream_request')
-def on_stream_request():
-    print('Stream requested')
-    # Send the decoded video stream over the WebSocket connection
-    for frame in gen_frames():
-        emit('stream_frame', {'data': frame})
+@app.route('/api/current_time', methods=['GET'])
+def current_time():
+    now = datetime.now()
+    time_string = now.strftime("%Y-%m-%d %H:%M:%S")
+    return jsonify({"current_time": time_string})
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    app.run(ssl_context='adhoc')  # This runs the Flask server with an ad-hoc SSL context for HTTPS

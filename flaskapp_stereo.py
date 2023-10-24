@@ -1,24 +1,51 @@
-from flask import Flask, jsonify, send_from_directory
-from datetime import datetime
+import cv2
+import numpy as np
+from flask import Flask, render_template, Response
+from flask_socketio import SocketIO, emit
 
-app = Flask(__name__, static_url_path='', static_folder='.')
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
 
-# Serve your main WebXR HTML file
+def gen_frames():
+    cap = cv2.VideoCapture(0)
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        # Split the frame into left and right
+        width = frame.shape[1]
+        left_frame = frame[:, :width//2]
+        right_frame = frame[:, width//2:]
+        # Resize each half to 960x540
+        left_resized = cv2.resize(left_frame, (960, 540))
+        right_resized = cv2.resize(right_frame, (960, 540))
+        # Combine them into a new frame
+        combined_frame = np.vstack((left_resized, right_resized))
+        # Convert the frame to a byte stream
+        frame_bytes = cv2.imencode('.jpg', combined_frame)[1].tobytes()
+        # Send the byte stream over the WebSocket connection
+        yield frame_bytes
+    cap.release()
+
 @app.route('/')
 def index():
-    return send_from_directory('.', 'flask_stereo.html')
+    return render_template('flask_stereo.html')
 
-# API endpoint for Python processing
-@app.route('/api/analyze', methods=['POST'])
-def analyze():
-    # Your Python logic here
-    return {"result": "analysis result"}
+@socketio.on('connect')
+def on_connect():
+    print('Client connected')
 
-@app.route('/api/current_time', methods=['GET'])
-def current_time():
-    now = datetime.now()
-    time_string = now.strftime("%Y-%m-%d %H:%M:%S")
-    return jsonify({"current_time": time_string})
+@socketio.on('disconnect')
+def on_disconnect():
+    print('Client disconnected')
+
+@socketio.on('stream_request')
+def on_stream_request():
+    print('Stream requested')
+    # Send the decoded video stream over the WebSocket connection
+    for frame in gen_frames():
+        emit('stream_frame', {'data': frame})
 
 if __name__ == '__main__':
-    app.run(ssl_context='adhoc')  # This runs the Flask server with an ad-hoc SSL context for HTTPS
+    socketio.run(app, debug=True)
