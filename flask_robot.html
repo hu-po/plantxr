@@ -83,19 +83,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     // video.src = 'media/video/bbb-sunflower-540p2-1min.webm';
     video.src = 'media/video/output.webm';
 
-    // // Attempt at streaming video, does not seem to work
-    // video.src = 'ws://' + window.location.host + '/stream';
-    // let socket = io.connect('http://' + document.domain + ':' + location.port);
-    // socket.on('connect', function () {
-    //   console.log('Connected to server');
-    //   socket.emit('stream_request');
-    // });
-    // socket.on('stream_frame', function (data) {
-    //   let blob = new Blob([data.data], { type: 'image/jpeg' });
-    //   let url = URL.createObjectURL(blob);
-    //   video.src = url;
-    // });
-
     let videoNode = new VideoNode({
       video: video,
       displayMode: 'stereoTopBottom'
