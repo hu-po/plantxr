@@ -50,8 +50,8 @@ def on_stream_request():
 
 @app.route('/api/servos')
 def get_servo_angles():
-    servos = [0, 0, 0]
-    return jsonify({'servos': servos})
+    servos = np.random.uniform(-1, 1, size=3)
+    return jsonify({'servos': servos.tolist()})
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
